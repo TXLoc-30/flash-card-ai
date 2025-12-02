@@ -1,0 +1,336 @@
+/* ================================
+   CARD MATCHING GAME – QUIZLET STYLE
+   ================================ */
+
+   .card-matching-game-wrapper {
+    padding: 2rem 1.5rem 3rem;
+    background: #f7f7fb; /* nền xám nhạt kiểu Quizlet */
+    min-height: calc(100vh - 80px);
+  }
+  
+  /* Khung game chính */
+  .card-matching-game {
+    max-width: 1120px;
+    margin: 0 auto;
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 24px 28px 32px;
+    box-shadow: 0 24px 60px rgba(15, 23, 42, 0.12);
+    border: 1px solid #e5e7eb;
+    position: relative;
+  }
+  
+  /* Thanh thông tin trên cùng: cặp, thời gian, số lần thử, nút chơi lại */
+  .card-matching-game .game-info {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 999px;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    margin-bottom: 1.25rem;
+  }
+  
+  .card-matching-game .info-item {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    min-width: 150px;
+  }
+  
+  .card-matching-game .info-icon {
+    width: 2.2rem;
+    height: 2.2rem;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #e8f9ef;
+    color: #39a95d;         /* xanh lá project */
+    font-size: 0.9rem;
+  }
+  
+  .card-matching-game .info-content {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .card-matching-game .info-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #9593a6;
+  }
+  
+  .card-matching-game .info-value {
+    font-weight: 700;
+    font-size: 1rem;
+    color: #504f5b;
+  }
+  
+  .card-matching-game .time-value {
+    font-variant-numeric: tabular-nums;
+  }
+  
+  /* Nút chơi lại ở bên phải thanh info */
+  .card-matching-game .reset-btn {
+    margin-left: auto;
+    padding: 0.55rem 1.2rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    white-space: nowrap;
+  }
+  
+  /* Overlay hoàn thành game */
+  .card-matching-game .game-complete {
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.35);
+    backdrop-filter: blur(3px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+    padding: 1rem;
+  }
+  
+  .card-matching-game .complete-message {
+    background: #ffffff;
+    border-radius: 20px;
+    max-width: 420px;
+    width: 100%;
+    padding: 1.8rem 1.8rem 1.4rem;
+    text-align: center;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
+  }
+  
+  .card-matching-game .complete-icon {
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 50%;
+    display: grid;
+    place-content: center;
+    margin: 0 auto 1rem auto;
+    background: #e8f9ef;
+    color: #39a95d;
+    font-size: 1.6rem;
+  }
+  
+  .card-matching-game .complete-message h2 {
+    margin: 0.3rem 0 1rem;
+    font-size: 1.45rem;
+  }
+  
+  /* Điểm số */
+  .card-matching-game .score-section {
+    margin-bottom: 1.4rem;
+  }
+  
+  .card-matching-game .score-display {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.35rem;
+    border-radius: 999px;
+    padding: 0.55rem 1.1rem;
+    background: #fffbe6;
+    border: 1px solid #ffe58f;
+  }
+  
+  .card-matching-game .score-star {
+    color: #fbbf24;
+  }
+  
+  .card-matching-game .score-value {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #504f5b;
+  }
+  
+  .card-matching-game .score-label {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    color: #9593a6;
+  }
+  
+  /* Thống kê nhỏ */
+  .card-matching-game .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.7rem;
+    margin-bottom: 1.4rem;
+  }
+  
+  .card-matching-game .stat-item {
+    padding: 0.6rem 0.4rem;
+    border-radius: 0.9rem;
+    background: #f9fafb;
+  }
+  
+  .card-matching-game .stat-label {
+    display: block;
+    font-size: 0.75rem;
+    color: #9593a6;
+    margin-bottom: 0.15rem;
+  }
+  
+  .card-matching-game .stat-value {
+    font-size: 1rem;
+    font-weight: 700;
+  }
+  
+  /* Nút dưới overlay */
+  .card-matching-game .complete-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: center;
+  }
+  
+  /* Khu vực chơi */
+  .game-area-quizlet {
+    margin-top: 0.5rem;
+  }
+  
+  /* Grid thẻ giống Quizlet */
+  .cards-grid-quizlet {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 12px;
+  }
+  
+  /* Thẻ đơn */
+  .game-card-quizlet {
+    position: relative;
+    border-radius: 18px;
+    padding: 1rem 1.1rem;
+    min-height: 96px;
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    transition:
+      transform 0.16s ease,
+      box-shadow 0.16s ease,
+      border-color 0.16s ease,
+      background-color 0.16s ease,
+      color 0.16s ease;
+  }
+  
+  .game-card-quizlet .card-content-quizlet {
+    word-break: break-word;
+    white-space: pre-wrap;
+    font-weight: 600;
+    font-size: 0.98rem;
+    color: #111827;
+  }
+  
+  /* Màu nền front/back nhẹ để phân biệt */
+  .game-card-quizlet.card-front {
+    background: #f5fdf8;
+  }
+  
+  .game-card-quizlet.card-back {
+    background: #f7f6ff;
+  }
+  
+  /* Hover */
+  .game-card-quizlet:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 18px 30px rgba(15, 23, 42, 0.12);
+    border-color: #39a95d;
+  }
+  
+  /* Đang chọn */
+  .game-card-quizlet.selected {
+    border-color: #39a95d;
+    box-shadow: 0 18px 36px rgba(57, 169, 93, 0.35);
+  }
+  
+  /* Đã matched */
+  .game-card-quizlet.matched {
+    background: #e9fbea;
+    border-color: #39a95d;
+    cursor: default;
+  }
+  
+  .game-card-quizlet.matched .card-content-quizlet {
+    color: #005611;
+  }
+  
+  /* Icon check góc phải khi matched */
+  .card-matched-overlay {
+    position: absolute;
+    top: 0.55rem;
+    right: 0.55rem;
+    width: 1.6rem;
+    height: 1.6rem;
+    border-radius: 999px;
+    background: #39a95d;
+    color: #ffffff;
+    display: grid;
+    place-content: center;
+    font-size: 0.85rem;
+  }
+  
+  /* Ghép sai – rung nhẹ + đỏ */
+  .game-card-quizlet.wrong {
+    border-color: #ff6262;
+    background: #ffecec;
+    animation: shake-card 0.25s ease;
+  }
+  
+  @keyframes shake-card {
+    0%   { transform: translateX(0); }
+    25%  { transform: translateX(-4px); }
+    50%  { transform: translateX(4px); }
+    75%  { transform: translateX(-2px); }
+    100% { transform: translateX(0); }
+  }
+  
+  /* Khi đang tính điểm */
+  .all-cards-matched {
+    padding: 2rem 1rem;
+    text-align: center;
+    color: #504f5b;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .card-matching-game-wrapper {
+      padding: 1.5rem 0.75rem 2rem;
+    }
+  
+    .card-matching-game {
+      padding: 1.4rem 1.2rem 1.6rem;
+      border-radius: 18px;
+    }
+  
+    .card-matching-game .game-info {
+      border-radius: 18px;
+      gap: 0.6rem;
+    }
+  
+    .card-matching-game .reset-btn {
+      width: 100%;
+      margin-left: 0;
+    }
+  
+    .card-matching-game .stats-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  
+    .cards-grid-quizlet {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  

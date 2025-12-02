@@ -1,0 +1,56 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Helper function to check if user is the owner
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    // Helper function to check if user can read a deck
+    function canReadDeck(deckId) {
+      let deck = get(/databases/$(database)/documents/decks/$(deckId));
+      return deck.data.private == false || isOwner(deck.data.owner);
+    }
+    
+    // Rules cho collection 'users'
+    match /users/{userId} {
+      allow read, write: if isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    // Rules cho collection 'decks'
+    match /decks/{deckId} {
+      // Chỉ owner mới có thể đọc/ghi deck riêng tư
+      allow read, write: if isAuthenticated() && request.auth.uid == resource.data.owner;
+      
+      // Ai cũng có thể đọc deck công khai
+      allow read: if resource.data.private == false;
+      
+      // Chỉ user đã đăng nhập mới có thể tạo deck mới
+      allow create: if isAuthenticated() && request.auth.uid == request.resource.data.owner;
+    }
+    
+    // Rules cho collection 'cards'
+    match /cards/{cardId} {
+      // Cho phép đọc nếu:
+      // 1. User là owner của card, HOẶC
+      // 2. User có thể đọc deck chứa card (deck là public hoặc user là owner của deck)
+      allow read: if isAuthenticated() && (
+        request.auth.uid == resource.data.owner ||
+        (resource.data.deckId != null && canReadDeck(resource.data.deckId))
+      );
+      
+      // Chỉ owner của card mới có thể update/delete
+      allow update, delete: if isAuthenticated() && request.auth.uid == resource.data.owner;
+      
+      // Chỉ user đã đăng nhập mới có thể tạo card mới và phải là owner
+      allow create: if isAuthenticated() && request.auth.uid == request.resource.data.owner;
+    }
+  }
+}
+
