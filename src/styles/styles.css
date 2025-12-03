@@ -267,7 +267,8 @@ form.deck-form {
   display: -ms-flexbox;
   display: flex;
   margin-top: 0;
-  padding-top: 15vh;
+  padding-top: 8vh;
+  padding-bottom: 4vh;
   position: relative;
 }
 
@@ -283,6 +284,7 @@ form.deck-form {
 .hero h1 {
   text-align: left;
   font-size: 1.8rem;
+  margin-bottom: 0.5rem;
 }
 
 .hero p {
@@ -290,10 +292,11 @@ form.deck-form {
   font-weight: 400;
   font-size: 1.1rem;
   line-height: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .hero .buttons {
-  margin-bottom: 10rem;
+  margin-bottom: 4rem;
 }
 
 .hero .curve {
@@ -428,8 +431,33 @@ textarea:focus {
       -ms-flex-align: center;
           align-items: center;
   padding: 1rem 1rem;
+  gap: 1rem;
   max-width: 1024px;
   margin: auto;
+}
+
+.navbar .navbar-inner .navbar-search {
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+  max-width: 400px;
+  margin: 0 1rem;
+  display: none;
+}
+
+.navbar .navbar-inner .navbar-search .search-bar {
+  margin: 0;
+  max-width: 100%;
+}
+
+.navbar .navbar-inner .navbar-search .search-bar .search-input-wrapper {
+  background-color: rgba(255, 255, 255, 0.9);
+  border-color: rgba(80, 79, 91, 0.3);
+}
+
+.navbar .navbar-inner .navbar-search .search-bar .search-input-wrapper:focus-within {
+  background-color: white;
+  border-color: #39a95d;
 }
 
 .navbar .navbar-inner .right-nav {
@@ -588,6 +616,104 @@ form .input-block .input-row {
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
+}
+
+.search-bar {
+  margin: 1.5rem 0;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.search-bar .search-input-wrapper {
+  position: relative;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  background-color: white;
+  border: 2px solid #504f5b;
+  border-radius: 2rem;
+  padding: 0.75rem 1rem;
+  -webkit-transition: border-color 0.2s, box-shadow 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.search-bar .search-input-wrapper:focus-within {
+  border-color: #ff6b6b;
+  box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+}
+
+.search-bar .search-input-wrapper .search-icon {
+  color: rgba(0, 0, 0, 0.5);
+  margin-right: 0.75rem;
+  font-size: 1rem;
+}
+
+.search-bar .search-input-wrapper .search-input {
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 1rem;
+  color: #504f5b;
+  padding: 0;
+}
+
+.search-bar .search-input-wrapper .search-input::placeholder {
+  color: rgba(0, 0, 0, 0.4);
+}
+
+.search-bar .search-input-wrapper .search-clear {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  color: rgba(0, 0, 0, 0.5);
+  -webkit-transition: color 0.2s;
+  transition: color 0.2s;
+  margin-left: 0.5rem;
+}
+
+.search-bar .search-input-wrapper .search-clear:hover {
+  color: #504f5b;
+}
+
+.search-bar .search-input-wrapper .search-clear svg {
+  font-size: 0.9rem;
+}
+
+.search-bar.deck-list-search {
+  max-width: 100%;
+  margin: 1rem 0;
+}
+
+.search-results-info {
+  text-align: center;
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 0.95rem;
+  margin: 0.5rem 0 1rem;
+}
+
+.no-results {
+  text-align: center;
+  color: rgba(0, 0, 0, 0.5);
+  font-style: italic;
+  padding: 2rem;
+  margin: 1rem 0;
 }
 
 form .btn {
@@ -1073,7 +1199,7 @@ footer p {
   height: 15rem;
   width: 10rem;
   left: calc(22em + 14vw);
-  top: 11rem;
+  top: 8rem;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -1193,8 +1319,12 @@ footer p {
 }
 
 @media only screen and (min-width: 512px) {
+  .hero section {
+    padding-top: 6vh;
+    padding-bottom: 3vh;
+  }
   .hero h1 {
-    font-size: 2.5rem;
+    font-size: 2.2rem;
   }
   .hero .hero-content {
     max-width: 33ch;
@@ -1212,11 +1342,14 @@ footer p {
     height: 15rem;
     width: 10rem;
     left: calc(20em + 30vw);
-    top: 11rem;
+    top: 8rem;
   }
 }
 
 @media only screen and (min-width: 768px) {
+  .navbar .navbar-inner .navbar-search {
+    display: none;
+  }
   h2 {
     font-size: 2rem;
   }
@@ -1244,12 +1377,82 @@ footer p {
   .navbar ul li a.active {
     color: #39a95d;
   }
+  .hero section {
+    padding-top: 7vh;
+    padding-bottom: 3vh;
+  }
   .hero h1 {
-    font-size: 2.5rem;
+    font-size: 2.2rem;
   }
   .hero .hero-content {
     max-width: 33ch;
     z-index: 10;
+  }
+  .user-decks {
+    text-align: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+  .user-decks h2 {
+    margin-bottom: 1rem;
+  }
+  .user-decks p {
+    font-size: 1.0rem;
+    margin-bottom: 1.5rem;
+  }
+  .user-decks .deck-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  .user-decks .deck-grid .deck-card {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    -webkit-box-align: start;
+        -ms-flex-align: start;
+            align-items: flex-start;
+    text-align: left;
+    padding: 1.5rem;
+    position: relative;
+  }
+  .user-decks .deck-grid .deck-card span:first-child {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+  .user-decks .deck-grid .deck-card .deck-meta {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: rgba(0, 0, 0, 0.6);
+    margin-top: auto;
+  }
+  .user-decks .deck-grid .deck-card .deck-meta .private-badge {
+    background: rgba(255, 193, 7, 0.2);
+    color: #856404;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+  .user-decks .deck-grid .deck-card .icon {
+    position: absolute;
+    right: 1.5rem;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+        -ms-transform: translateY(-50%);
+            transform: translateY(-50%);
   }
   .public-decks {
     text-align: center;
@@ -1257,6 +1460,155 @@ footer p {
   }
   .public-decks p {
     font-size: 1.0rem;
+  }
+  .public-decks.search-results {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+  .public-decks.search-results .deck-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+  .public-decks.search-results .public-badge {
+    background: rgba(57, 169, 93, 0.2);
+    color: #005611;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    margin-left: 0.5rem;
+  }
+  .public-decks.search-results .more-results {
+    margin-top: 1rem;
+    color: rgba(0, 0, 0, 0.6);
+    font-style: italic;
+  }
+
+  .search-results-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+    min-height: 60vh;
+  }
+
+  .search-results-page .search-results-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .search-results-page .search-results-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: #504f5b;
+  }
+
+  .search-results-page .search-results-header .search-query {
+    font-size: 1.1rem;
+    color: rgba(0, 0, 0, 0.6);
+  }
+
+  .search-results-page .search-results-header .search-query strong {
+    color: #39a95d;
+    font-weight: 600;
+  }
+
+  .search-results-page .no-results-section {
+    text-align: center;
+    padding: 4rem 2rem;
+  }
+
+  .search-results-page .no-results-section .no-results {
+    font-size: 1.2rem;
+    color: rgba(0, 0, 0, 0.5);
+    margin-bottom: 2rem;
+  }
+
+  .search-results-page .search-results-section {
+    margin-bottom: 3rem;
+  }
+
+  .search-results-page .search-results-section h2 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    color: #504f5b;
+  }
+
+  .search-results-page .search-results-section .results-count {
+    color: rgba(0, 0, 0, 0.6);
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .search-results-page .search-results-section .deck-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+  }
+
+  .search-results-page .search-results-section .deck-card {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    -webkit-box-align: start;
+        -ms-flex-align: start;
+            align-items: flex-start;
+    text-align: left;
+    padding: 1.5rem;
+    position: relative;
+  }
+
+  .search-results-page .search-results-section .deck-card span:first-child {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  .search-results-page .search-results-section .deck-card .deck-meta {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: rgba(0, 0, 0, 0.6);
+    margin-top: auto;
+  }
+
+  .search-results-page .search-results-section .deck-card .deck-meta .private-badge {
+    background: rgba(255, 193, 7, 0.2);
+    color: #856404;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+
+  .search-results-page .search-results-section .deck-card .deck-meta .public-badge {
+    background: rgba(57, 169, 93, 0.2);
+    color: #005611;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+
+  .search-results-page .search-results-section .deck-card .icon {
+    position: absolute;
+    right: 1.5rem;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+        -ms-transform: translateY(-50%);
+            transform: translateY(-50%);
   }
   .buttons {
     display: -webkit-box;
@@ -1346,6 +1698,10 @@ footer p {
   footer {
     text-align: center;
   }
+  .navbar .navbar-inner .navbar-search {
+    display: block;
+    max-width: 500px;
+  }
   footer .curve {
     -webkit-transform: translateY(-65%) scaleY(0.5);
             transform: translateY(-65%) scaleY(0.5);
@@ -1368,7 +1724,29 @@ footer p {
     height: 17rem;
     width: 10rem;
     left: calc(60vw);
-    top: 11rem;
+    top: 8rem;
+  }
+}
+
+@media only screen and (min-width: 1024px) {
+  .navbar .navbar-inner {
+    max-width: 1200px;
+    padding: 1.5rem 2rem;
+  }
+
+  .navbar .navbar-inner .navbar-search {
+    display: block;
+    max-width: 500px;
+  }
+}
+
+@media only screen and (min-width: 1400px) {
+  .navbar .navbar-inner {
+    max-width: 1400px;
+  }
+
+  .navbar .navbar-inner .navbar-search {
+    max-width: 600px;
   }
 }
 /*# sourceMappingURL=styles.css.map */

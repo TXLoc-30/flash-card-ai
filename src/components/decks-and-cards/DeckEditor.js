@@ -166,7 +166,7 @@ const DeckEditor = ({
           }}>
             <button
               type="button"
-              className={`btn ${purpose === 'translation' ? 'btn-primary' : 'btn-secondary'}`}
+              className={`btn ${purpose === 'translation' ? 'btn-primary' : 'btn-secondary btn-purpose'}`}
               onClick={() => setPurpose('translation')}
               style={{ 
                 width: '100%', 
@@ -184,7 +184,7 @@ const DeckEditor = ({
             </button>
             <button
               type="button"
-              className={`btn ${purpose === 'academic' ? 'btn-primary' : 'btn-secondary'}`}
+              className={`btn ${purpose === 'academic' ? 'btn-primary' : 'btn-secondary btn-purpose'}`}
               onClick={() => setPurpose('academic')}
               style={{ 
                 width: '100%', 

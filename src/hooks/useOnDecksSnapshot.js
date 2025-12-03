@@ -18,7 +18,10 @@ const useOnDecksSnapshot = (user) => {
     let ref = db.collection('decks');
     let unsubscribe = ref.where("owner", "==", user.uid).onSnapshot((snapshot) => {
       let arr = [];
-      snapshot.forEach(deck => arr.push(deck.data()));
+      snapshot.forEach(deck => {
+        const deckData = deck.data();
+        arr.push({ ...deckData, id: deck.id });
+      });
       setDecks(arr);
       /* console.log("Deck data updated: ", arr); */
     }, error => console.log("Error: ", error.message))

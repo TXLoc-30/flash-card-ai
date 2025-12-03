@@ -8,12 +8,14 @@ import { Route, Switch, useHistory } from 'react-router-dom';
 
 import { firebaseAuth } from './provider/AuthProvider';
 import useOnDecksSnapshot from './hooks/useOnDecksSnapshot';
+import usePublicDecksSnapshot from './hooks/usePublicDecksSnapshot';
 import useGetShuffledCards from './hooks/useGetShuffledCards';
 
 import Deck from './components/decks-and-cards/Deck';
 import CardMatchingGame from './components/decks-and-cards/CardMatchingGame';
 import Dashboard from './components/Dashboard';
 import Landing from './components/Landing';
+import SearchResults from './components/SearchResults';
 import Login from './components/account-management/Login';
 import Logout from './components/account-management/Logout';
 import MyAccount from './components/account-management/MyAccount';
@@ -41,10 +43,12 @@ const App = () => {
   const [selectedDecks, setSelectedDecks] = useState([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [shuffledCards, setShuffledCards] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const history = useHistory();
   const { user } = useContext(firebaseAuth);
   const { decks } = useOnDecksSnapshot(user);
+  const { publicDecks } = usePublicDecksSnapshot();
   const { cards } = useGetShuffledCards(user, selectedDecks);
 
    /* Update the 'shuffledCards' array whenever 'cards'
@@ -75,10 +79,21 @@ const App = () => {
     setSelectedDecks([]);
   }, [user]);
 
+  // Redirect to home if search query is empty and on search page
+  useEffect(() => {
+    if (!searchQuery.trim() && history.location.pathname === '/search') {
+      history.push('/');
+    }
+  }, [searchQuery, history]);
+
   const handleButtons = (event) => {
-    // Prevent default behavior
-    event.preventDefault();
-    event.stopPropagation();
+    // Prevent default behavior (if event is a real event object)
+    if (event && typeof event.preventDefault === 'function') {
+      event.preventDefault();
+    }
+    if (event && typeof event.stopPropagation === 'function') {
+      event.stopPropagation();
+    }
     
     // Use currentTarget instead of target to get the element with the listener
     // This ensures we get the button even when clicking on child elements (icon, text)
@@ -142,9 +157,15 @@ const App = () => {
 
   return (
     <div className="app">
+      <div className="container">
       <Nav 
         onClick={handleButtons}
         isMenuOpen={isMenuOpen}
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        decks={decks}
+        publicDecks={publicDecks}
+        user={user}
       />
       <MobileMenu 
         isOpen={isMenuOpen}
@@ -203,17 +224,25 @@ const App = () => {
               cards={cards}
               selectedDecks={selectedDecks}
               setSelectedDecks={setSelectedDecks}
+              searchQuery={searchQuery}
             />
             <Footer />
           </main>
         </Route>
-        <Route path="/">
+        <Route path="/search">
           <main>
-            <Landing />
+            <SearchResults searchQuery={searchQuery} publicDecks={publicDecks} />
+            <Footer />
+          </main>
+        </Route>
+        <Route exact path="/">
+          <main>
+            <Landing publicDecks={publicDecks} />
             <Footer />
           </main>
         </Route>
       </Switch>
+      </div>
     </div>
   );
 }

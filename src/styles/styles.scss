@@ -61,6 +61,7 @@ $general-padding-lg: 2rem;
 html {
   height: 100%;
   overflow-x: hidden;
+  background-color: $color-off-light;
 }
 
 svg, path {
@@ -71,6 +72,13 @@ body {
   color: $color-dark;
   font-family: "Montserrat", sans-serif;
   overflow-x: hidden;
+  background-color: $color-off-light;
+  min-height: 100vh;
+}
+
+.app {
+  background-color: $color-off-light;
+  min-height: 100vh;
 }
 
 a {
@@ -115,6 +123,14 @@ button, a {
     background-color: $color-primary-700;
     color: $color-light;
     border-color: $color-primary-700;
+
+    &.btn-purpose {
+      color: $color-dark;
+      
+      span, svg, * {
+        color: $color-dark;
+      }
+    }
   }
   
   &.btn-small {
@@ -252,7 +268,8 @@ button, a {
   section {
     display: flex;
     margin-top: 0;
-    padding-top: 15vh;
+    padding-top: 8vh;
+    padding-bottom: 4vh;
     position: relative;
   }
 
@@ -267,11 +284,13 @@ button, a {
 
   h1 {
     text-align: left;
+    margin-bottom: 0.5rem;
     font-size: 1.8rem;
   }
 
   p {
     text-align: left;
+    margin-bottom: 1rem;
     font-weight: 400;
     font-size: 1.1rem;
     line-height: 1.5rem;
@@ -431,9 +450,31 @@ textarea:focus {
     justify-content: space-between;
     align-items: center;
     padding: 1rem $general-padding;
+    gap: 1rem;
 
     max-width: 1024px;
     margin: auto;
+
+    .navbar-search {
+      flex: 1;
+      max-width: 400px;
+      margin: 0 1rem;
+
+      .search-bar {
+        margin: 0;
+        max-width: 100%;
+
+        .search-input-wrapper {
+          background-color: rgba(255, 255, 255, 0.9);
+          border-color: rgba(80, 79, 91, 0.3);
+
+          &:focus-within {
+            background-color: white;
+            border-color: $color-primary;
+          }
+        }
+      }
+    }
 
     .right-nav {
       display: flex;
@@ -573,12 +614,96 @@ form {
     .btn.btn-icon {
       color: $color-dark;
     }
-  
+    
     .input-row {
       display: flex;
       gap: 1rem;
       align-items: center;
     }
+  }
+
+  .search-bar {
+    margin: 1.5rem 0;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+
+    .search-input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      background-color: $color-light;
+      border: $border-width solid $color-dark;
+      border-radius: 2rem;
+      padding: 0.75rem 1rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+
+      &:focus-within {
+        border-color: $color-primary;
+        box-shadow: 0 0 0 3px rgba($color-primary, 0.1);
+      }
+
+      .search-icon {
+        color: rgba(0, 0, 0, 0.5);
+        margin-right: 0.75rem;
+        font-size: 1rem;
+      }
+
+      .search-input {
+        flex: 1;
+        border: none;
+        background: transparent;
+        outline: none;
+        font-size: 1rem;
+        color: $color-dark;
+        padding: 0;
+
+        &::placeholder {
+          color: rgba(0, 0, 0, 0.4);
+        }
+      }
+
+      .search-clear {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0.25rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: rgba(0, 0, 0, 0.5);
+        transition: color 0.2s;
+        margin-left: 0.5rem;
+
+        &:hover {
+          color: $color-dark;
+        }
+
+        svg {
+          font-size: 0.9rem;
+        }
+      }
+    }
+
+    &.deck-list-search {
+      max-width: 100%;
+      margin: 1rem 0;
+    }
+  }
+
+  .search-results-info {
+    text-align: center;
+    color: rgba(0, 0, 0, 0.6);
+    font-size: 0.95rem;
+    margin: 0.5rem 0 1rem;
+  }
+
+  .no-results {
+    text-align: center;
+    color: rgba(0, 0, 0, 0.5);
+    font-style: italic;
+    padding: 2rem;
+    margin: 1rem 0;
   }
   
   .btn {
@@ -681,6 +806,15 @@ form {
 
   to {
     transform: rotate(360deg);
+  }
+}
+
+.container {
+  width: 100%;
+  margin: 0 auto;
+  
+  @media only screen and (min-width: 1024px) {
+    max-width: 100%;
   }
 }
 
@@ -989,7 +1123,7 @@ footer {
     height: 15rem;
     width: 10rem;
     left: calc(22em + 14vw);
-    top: 11rem;
+    top: 8rem;
 
     display: flex;
     flex-direction: column;
@@ -1086,8 +1220,13 @@ footer {
 
 @media only screen and (min-width: 512px) {
   .hero {
+    section {
+      padding-top: 6vh;
+      padding-bottom: 3vh;
+    }
+
     h1 {
-      font-size: 2.5rem;
+      font-size: 2.2rem;
     }
 
     .hero-content {
@@ -1107,7 +1246,7 @@ footer {
       height: 15rem;
       width: 10rem;
       left: calc(20em + 30vw);
-      top: 11rem;
+      top: 8rem;
     }
   }
 }
@@ -1127,6 +1266,9 @@ footer {
   }
 
   .navbar {
+    .navbar-search {
+      display: none; // Hide on medium screens, show on large
+    }
 
     ul {
       margin: 0;
@@ -1159,11 +1301,213 @@ footer {
     }
   }
 
+  .user-decks {
+    text-align: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+    
+    h2 {
+      margin-bottom: 1rem;
+    }
+    
+    p {
+      font-size: 1.0rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .deck-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1rem;
+      
+      .deck-card {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        text-align: left;
+        padding: 1.5rem;
+        position: relative;
+        
+        span:first-child {
+          font-weight: 600;
+          margin-bottom: 0.5rem;
+        }
+        
+        .deck-meta {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          font-size: 0.9rem;
+          color: rgba(0, 0, 0, 0.6);
+          margin-top: auto;
+          
+          .private-badge {
+            background: rgba(255, 193, 7, 0.2);
+            color: #856404;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+          }
+        }
+        
+        .icon {
+          position: absolute;
+          right: 1.5rem;
+          top: 50%;
+          transform: translateY(-50%);
+        }
+      }
+    }
+  }
+
   .public-decks {
     text-align: center;
     max-width: 512px;
     p {
       font-size: 1.0rem;
+    }
+
+    &.search-results {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+
+      .deck-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1rem;
+        margin: 1.5rem 0;
+      }
+
+      .public-badge {
+        background: rgba(57, 169, 93, 0.2);
+        color: #005611;
+        padding: 0.2rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        margin-left: 0.5rem;
+      }
+
+      .more-results {
+        margin-top: 1rem;
+        color: rgba(0, 0, 0, 0.6);
+        font-style: italic;
+      }
+    }
+  }
+
+  .search-results-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+    min-height: 60vh;
+
+    .search-results-header {
+      text-align: center;
+      margin-bottom: 3rem;
+      padding-bottom: 2rem;
+      border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+
+      h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        color: $color-dark;
+      }
+
+      .search-query {
+        font-size: 1.1rem;
+        color: rgba(0, 0, 0, 0.6);
+
+        strong {
+          color: $color-primary;
+          font-weight: 600;
+        }
+      }
+    }
+
+    .no-results-section {
+      text-align: center;
+      padding: 4rem 2rem;
+
+      .no-results {
+        font-size: 1.2rem;
+        color: rgba(0, 0, 0, 0.5);
+        margin-bottom: 2rem;
+      }
+    }
+
+    .search-results-section {
+      margin-bottom: 3rem;
+
+      h2 {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+        color: $color-dark;
+      }
+
+      .results-count {
+        color: rgba(0, 0, 0, 0.6);
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .deck-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1rem;
+      }
+
+      .deck-card {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        text-align: left;
+        padding: 1.5rem;
+        position: relative;
+
+        span:first-child {
+          font-weight: 600;
+          margin-bottom: 0.5rem;
+        }
+
+        .deck-meta {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          font-size: 0.9rem;
+          color: rgba(0, 0, 0, 0.6);
+          margin-top: auto;
+
+          .private-badge {
+            background: rgba(255, 193, 7, 0.2);
+            color: #856404;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+          }
+
+          .public-badge {
+            background: rgba(57, 169, 93, 0.2);
+            color: #005611;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+          }
+        }
+
+        .icon {
+          position: absolute;
+          right: 1.5rem;
+          top: 50%;
+          transform: translateY(-50%);
+        }
+      }
     }
   }
 
@@ -1172,6 +1516,22 @@ footer {
     gap: 1rem;
     > * {
       flex: 1;
+    }
+  }
+
+  .dashboard {
+    .dashboard-inner {
+      > div:last-child {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-top: 2rem;
+
+        .btn {
+          flex: 0 1 auto;
+          min-width: 200px;
+        }
+      }
     }
   }
 
@@ -1203,6 +1563,14 @@ footer {
       background-color: $color-primary-200;
       border-color: $color-primary-200;
       color: $color-dark;
+    }
+
+    &.btn-secondary.btn-purpose:hover {
+      color: $color-dark;
+      
+      span, svg, * {
+        color: $color-dark;
+      }
     }
     
     &.btn-primary:hover {
@@ -1316,7 +1684,198 @@ footer {
       height: 17rem;
       width: 10rem;
       left: calc(60vw);
-      top: 11rem;
+      top: 8rem;
+    }
+  }
+}
+
+// Desktop breakpoint (1024px and above)
+@media only screen and (min-width: 1024px) {
+  body {
+    background: linear-gradient(to bottom, $color-off-light 0%, #f5f5f5 100%);
+  }
+
+  .navbar {
+    .navbar-inner {
+      max-width: 1200px;
+      padding: 1.5rem $general-padding-lg;
+    }
+
+    .navbar-search {
+      display: block;
+      max-width: 500px;
+    }
+  }
+
+  section {
+    max-width: 1200px;
+    padding: $general-padding-lg;
+    background-color: $color-light;
+    border-radius: 1.5rem;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  }
+
+  .hero {
+    section {
+      padding-top: 10vh;
+      padding-bottom: 5vh;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+    }
+
+    p {
+      font-size: 1.1rem;
+      line-height: 1.6rem;
+    }
+
+    .hero-content {
+      max-width: 45ch;
+    }
+  }
+
+  .dashboard-inner,
+  .my-account-inner {
+    max-width: 65ch;
+    background-color: $color-light;
+    border-radius: 1.5rem;
+    padding: 2.5rem;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  }
+
+  form {
+    max-width: 60ch;
+  }
+
+  .page-heading {
+    h1, h2 {
+      font-size: 2.5rem;
+    }
+  }
+
+  .deck-list {
+    ul {
+      li {
+        padding: 2.5rem 1.5rem;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+
+        .button-row {
+          margin-top: 0;
+        }
+      }
+    }
+  }
+
+  .navbar {
+    .navbar-inner {
+      max-width: 1200px;
+      padding: 1.5rem $general-padding-lg;
+    }
+  }
+
+  .card-matching-game-wrapper {
+    max-width: 1200px;
+  }
+
+  .card-matching-game {
+    padding: 2rem 2.5rem;
+  }
+
+  .cards-grid-quizlet {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1.25rem;
+  }
+
+  .game-info {
+    padding: 2rem 2.5rem;
+  }
+
+  .flippable {
+    max-width: 35rem;
+    height: 50rem;
+  }
+
+  .lightbox {
+    .lightbox-inner {
+      max-width: 900px;
+      padding: 3rem;
+    }
+  }
+
+  footer {
+    section {
+      max-width: 1200px;
+    }
+  }
+
+  .public-decks {
+    max-width: 800px;
+    p {
+      font-size: 1.1rem;
+    }
+  }
+}
+
+// Large desktop breakpoint (1400px and above)
+@media only screen and (min-width: 1400px) {
+  section {
+    max-width: 1400px;
+  }
+
+  .navbar {
+    .navbar-inner {
+      max-width: 1400px;
+    }
+
+    .navbar-search {
+      max-width: 600px;
+    }
+  }
+
+  .hero {
+    .hero-content {
+      max-width: 60ch;
+    }
+
+    h1 {
+      font-size: 3.5rem;
+    }
+
+    p {
+      font-size: 1.35rem;
+    }
+  }
+
+  .dashboard-inner,
+  .my-account-inner {
+    max-width: 75ch;
+  }
+
+  form {
+    max-width: 70ch;
+  }
+
+  .navbar {
+    .navbar-inner {
+      max-width: 1400px;
+    }
+  }
+
+  .card-matching-game-wrapper {
+    max-width: 1400px;
+  }
+
+  .cards-grid-quizlet {
+    grid-template-columns: repeat(6, 1fr);
+    gap: 1.5rem;
+  }
+
+  footer {
+    section {
+      max-width: 1400px;
     }
   }
 }
@@ -2355,6 +2914,37 @@ footer {
   
     .card-matching-game .stats-grid {
       grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media only screen and (min-width: 1024px) {
+    .card-matching-game {
+      padding: 2rem 2.5rem;
+    }
+
+    .card-matching-game .game-info {
+      padding: 1.25rem 1.5rem;
+      gap: 1.5rem;
+    }
+
+    .cards-grid-quizlet {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 1.25rem;
+    }
+
+    .card-matching-game .stats-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media only screen and (min-width: 1400px) {
+    .card-matching-game {
+      padding: 2.5rem 3rem;
+    }
+
+    .cards-grid-quizlet {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 1.5rem;
     }
   }
   

@@ -259,7 +259,11 @@ const CardMatchingGame = ({
         <div style={{ textAlign: 'center', padding: '2rem' }}>
           <h2>Không có thẻ để chơi</h2>
           <p>Vui lòng chọn ít nhất một bộ thẻ có thẻ từ Dashboard.</p>
-          <button className="btn btn-primary" onClick={() => onClick({ currentTarget: { name: 'exit' } })}>
+          <button 
+            className="btn btn-primary" 
+            name="exit"
+            onClick={onClick}
+          >
             Quay lại Dashboard
           </button>
         </div>
@@ -349,7 +353,8 @@ const CardMatchingGame = ({
                 </button>
                 <button 
                   className="btn btn-secondary" 
-                  onClick={() => onClick({ currentTarget: { name: 'exit' } })}
+                  name="exit"
+                  onClick={onClick}
                 >
                   <FontAwesomeIcon icon={faTimes} />&nbsp;Quay lại
                 </button>

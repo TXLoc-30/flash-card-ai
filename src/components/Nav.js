@@ -3,22 +3,28 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useHistory } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faReply } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 
-
 import Navlinks from './Navlinks';
+import SearchBar from './SearchBar';
 
 const Nav = ({
   onClick,
   isMenuOpen,
-  mobile=false
+  mobile=false,
+  searchQuery,
+  setSearchQuery,
+  decks,
+  publicDecks,
+  user
 }) => {
   const [navClasses, setNavClasses] = useState("navbar");
   const btnClasses= "btn btn-hamburger small-screen-only " + (isMenuOpen && "open"); 
   let location = useLocation();
+  const history = useHistory();
 
   useEffect(() => {
 
@@ -42,6 +48,24 @@ const Nav = ({
           <FontAwesomeIcon icon={faReply} size="2x" className="icon"/>&nbsp;&nbsp;
           Flash Cards
         </Link>
+        {(decks && decks.length > 0) || (publicDecks && publicDecks.length > 0) ? (
+          <div className="navbar-search">
+            <SearchBar
+              value={searchQuery}
+              onChange={(e) => {
+                const newValue = e.target.value;
+                setSearchQuery(newValue);
+                // Navigate to search page when user types, or back to home if empty
+                if (newValue.trim() && location.pathname !== '/search') {
+                  history.push('/search');
+                } else if (!newValue.trim() && location.pathname === '/search') {
+                  history.push('/');
+                }
+              }}
+              placeholder="Tìm kiếm bộ thẻ..."
+            />
+          </div>
+        ) : null}
         <div className="right-nav">
           <nav className="large-screen-only">
             <Navlinks closeMenu={() => null}/>
