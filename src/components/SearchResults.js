@@ -3,40 +3,51 @@
  */
 
 import React, { useContext, useMemo } from 'react';
-import { Link } from 'react-router-dom';
 import { firebaseAuth } from '../provider/AuthProvider';
 import useOnDecksSnapshot from '../hooks/useOnDecksSnapshot';
+import DeckCard from './decks-and-cards/DeckCard';
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faAngleRight } from '@fortawesome/free-solid-svg-icons';
-
-const SearchResults = ({ searchQuery = '', publicDecks = [] }) => {
+const SearchResults = ({ 
+  searchQuery = '', 
+  publicDecks = [],
+  onDeckStart,
+  onDeckShuffle,
+  onDeckMatchGame
+}) => {
   const { user } = useContext(firebaseAuth);
   const { decks } = useOnDecksSnapshot(user);
 
-  const filteredDecks = useMemo(() => {
-    if (!decks || !searchQuery.trim()) return [];
+  // Combine all search results into one list
+  const allResults = useMemo(() => {
+    if (!searchQuery.trim()) return [];
     const query = searchQuery.toLowerCase().trim();
-    return decks.filter(deck => 
-      deck.title?.toLowerCase().includes(query) ||
-      deck.tags?.some(tag => tag.toLowerCase().includes(query))
-    );
-  }, [decks, searchQuery]);
+    const results = [];
 
-  const filteredPublicDecks = useMemo(() => {
-    if (!publicDecks || !searchQuery.trim()) return [];
-    const query = searchQuery.toLowerCase().trim();
-    // Exclude user's own decks from public search results
-    const userDeckIds = decks?.map(d => d.id) || [];
-    return publicDecks.filter(deck => 
-      !userDeckIds.includes(deck.id) && (
+    // Add user decks
+    if (decks && decks.length > 0) {
+      const userDecks = decks.filter(deck => 
         deck.title?.toLowerCase().includes(query) ||
         deck.tags?.some(tag => tag.toLowerCase().includes(query))
-      )
-    );
-  }, [publicDecks, searchQuery, decks]);
+      );
+      results.push(...userDecks.map(deck => ({ ...deck, isPublic: false })));
+    }
 
-  const hasResults = filteredDecks.length > 0 || filteredPublicDecks.length > 0;
+    // Add public decks (exclude user's own decks to avoid duplicates)
+    if (publicDecks && publicDecks.length > 0) {
+      const userDeckIds = decks?.map(d => d.id) || [];
+      const publicDecksFiltered = publicDecks.filter(deck => 
+        !userDeckIds.includes(deck.id) && (
+          deck.title?.toLowerCase().includes(query) ||
+          deck.tags?.some(tag => tag.toLowerCase().includes(query))
+        )
+      );
+      results.push(...publicDecksFiltered.map(deck => ({ ...deck, isPublic: true })));
+    }
+
+    return results;
+  }, [decks, publicDecks, searchQuery]);
+
+  const hasResults = allResults.length > 0;
 
   return (
     <div className="search-results-page">
@@ -48,60 +59,25 @@ const SearchResults = ({ searchQuery = '', publicDecks = [] }) => {
       {!hasResults && (
         <div className="no-results-section">
           <p className="no-results">Không tìm thấy bộ thẻ nào phù hợp với từ khóa "{searchQuery}"</p>
-          <Link to="/" className="btn btn-secondary">
-            Quay lại trang chủ
-          </Link>
         </div>
       )}
 
       {hasResults && (
-        <>
-          {user && filteredDecks.length > 0 && (
-            <section className="search-results-section user-decks-results">
-              <h2>Các bộ thẻ của bạn</h2>
-              <p className="results-count">Tìm thấy {filteredDecks.length} {filteredDecks.length === 1 ? 'bộ thẻ' : 'bộ thẻ'}</p>
-              <div className="deck-grid">
-                {filteredDecks.map((deck) => (
-                  <Link 
-                    key={deck.id} 
-                    to={`/app/d/${deck.id}`} 
-                    className="btn btn-tertiary deck-card"
-                  >
-                    <span>{deck.title}</span>
-                    <span className="deck-meta">
-                      {deck.numCards || 0} {deck.numCards === 1 ? 'thẻ' : 'thẻ'}
-                      {deck.private && <span className="private-badge">Riêng tư</span>}
-                    </span>
-                    <FontAwesomeIcon icon={faAngleRight} className="icon"/>
-                  </Link>
-                ))}
-              </div>
-            </section>
-          )}
-
-          {filteredPublicDecks.length > 0 && (
-            <section className="search-results-section public-decks-results">
-              <h2>Bộ thẻ công khai</h2>
-              <p className="results-count">Tìm thấy {filteredPublicDecks.length} {filteredPublicDecks.length === 1 ? 'bộ thẻ công khai' : 'bộ thẻ công khai'}</p>
-              <div className="deck-grid">
-                {filteredPublicDecks.map((deck) => (
-                  <Link 
-                    key={deck.id} 
-                    to={`/app/d/${deck.id}`} 
-                    className="btn btn-tertiary deck-card"
-                  >
-                    <span>{deck.title}</span>
-                    <span className="deck-meta">
-                      {deck.numCards || 0} {deck.numCards === 1 ? 'thẻ' : 'thẻ'}
-                      <span className="public-badge">Công khai</span>
-                    </span>
-                    <FontAwesomeIcon icon={faAngleRight} className="icon"/>
-                  </Link>
-                ))}
-              </div>
-            </section>
-          )}
-        </>
+        <section className="search-results-section">
+          <p className="results-count">Tìm thấy {allResults.length} {allResults.length === 1 ? 'bộ thẻ' : 'bộ thẻ'}</p>
+          <div className="deck-grid">
+            {allResults.map((deck) => (
+              <DeckCard
+                key={deck.id}
+                deck={deck}
+                onStart={onDeckStart}
+                onShuffle={onDeckShuffle}
+                onMatchGame={onDeckMatchGame}
+                isPublic={deck.isPublic}
+              />
+            ))}
+          </div>
+        </section>
       )}
     </div>
   );

@@ -8,7 +8,7 @@ import { Link, useHistory } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
+import { faEnvelope, faUser } from '@fortawesome/free-solid-svg-icons';
 
 import PageHeading from '../PageHeading';
 import TextInput from '../TextInput';
@@ -16,10 +16,10 @@ import TextInput from '../TextInput';
 const Signup = () => {
   const [tos, setTos] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [inputs, setInputs] = useState({ email: "", password: "" });
+  const [inputs, setInputs] = useState({ email: "", password: "", displayName: "" });
   const history = useHistory();
 
-  const { status, error, handleSignup} = useAuth(inputs.email, inputs.password);
+  const { status, error, handleSignup} = useAuth(inputs.email, inputs.password, null, inputs.displayName);
   const { user } = useContext(firebaseAuth);
 
   const handleSubmit = (e) => {
@@ -76,6 +76,15 @@ const Signup = () => {
       />
       <form onSubmit={handleSubmit}>
         <TextInput 
+          labelText="Tên của bạn"
+          id="displayName"
+          name="displayName"
+          placeholder="Nhập tên của bạn"
+          value={inputs.displayName}
+          onChange={handleChange}
+          icon={<FontAwesomeIcon icon={faUser} />}
+        />
+        <TextInput 
           labelText="Email"
           id="email"
           name="email"
@@ -108,7 +117,7 @@ const Signup = () => {
         {errorMessage !== "" && <p className="error">{errorMessage}</p>}
         <button 
           className="btn btn-primary"
-          disabled={!tos || inputs.password === "" || inputs.email === ""}
+          disabled={!tos || inputs.password === "" || inputs.email === "" || inputs.displayName.trim() === ""}
         >
           {status === "loading" ? "Loading . . . " : status === "success" ? "Success!" : "Sign Up"}
         </button>

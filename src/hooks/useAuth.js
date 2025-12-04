@@ -13,7 +13,7 @@ import { useState, useEffect, useContext } from 'react';
 import { auth, db, EmailAuthProvider } from '../firebase/firebaseIndex';
 import { firebaseAuth } from '../provider/AuthProvider';
 
-const useAuth = (email = null, password = null, newPassword = null) => {
+const useAuth = (email = null, password = null, newPassword = null, displayName = null) => {
   const { user } = useContext(firebaseAuth);
 
   const [userData, setUserData] = useState(null);
@@ -25,6 +25,7 @@ const useAuth = (email = null, password = null, newPassword = null) => {
   const [logout, setLogout] = useState(0);
   const [changeEmail, setChangeEmail] = useState(0);
   const [changePassword, setChangePassword] = useState(0);
+  const [changeDisplayName, setChangeDisplayName] = useState(0);
   const [deleteAccount, setDeleteAccount] = useState(0);
 
   // Logging user in
@@ -57,9 +58,13 @@ const useAuth = (email = null, password = null, newPassword = null) => {
     auth.createUserWithEmailAndPassword(email, password)
       .then((userCredential) => {
         let _user = userCredential.user;
-        db.collection('users').doc(_user.uid).set({
+        const userData = {
           decks: []
-        });
+        };
+        if (displayName && displayName.trim() !== "") {
+          userData.displayName = displayName.trim();
+        }
+        db.collection('users').doc(_user.uid).set(userData);
         setUserData(_user);
         setStatus("success");
       })
@@ -150,6 +155,33 @@ const useAuth = (email = null, password = null, newPassword = null) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [changePassword])
 
+  // Changing display name
+  useEffect(() => {
+    if (changeDisplayName === 0 || user === null) return;
+    setError(null);
+    setStatus("loading");
+
+    if (!displayName || displayName.trim() === "") {
+      setError({ code: "empty-name" });
+      setStatus("error");
+      return;
+    }
+
+    db.collection('users').doc(user.uid).update({
+      displayName: displayName.trim()
+    })
+    .then(() => {
+      console.log("Successfully updated display name.");
+      setStatus("success");
+    })
+    .catch((error) => {
+      console.log("An error occurred updating the display name: ", error.message);
+      setError(error);
+      setStatus("error");
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [changeDisplayName, user]);
+
   // Delete account
   useEffect(() => {
     if (deleteAccount === 0 || user === null) return;
@@ -184,6 +216,7 @@ const useAuth = (email = null, password = null, newPassword = null) => {
   const handleLogout = () => setLogout(prev => prev + 1);
   const handleChangeEmail = () => setChangeEmail(prev => prev + 1);
   const handleChangePassword = () => setChangePassword(prev => prev + 1);
+  const handleChangeDisplayName = () => setChangeDisplayName(prev => prev + 1);
   const handleDeleteAccount = () => setDeleteAccount(prev => prev + 1);
 
   return { 
@@ -195,6 +228,7 @@ const useAuth = (email = null, password = null, newPassword = null) => {
     handleLogout,
     handleChangeEmail,
     handleChangePassword,
+    handleChangeDisplayName,
     handleDeleteAccount,
   };
 }

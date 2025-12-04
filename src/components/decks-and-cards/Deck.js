@@ -4,10 +4,11 @@
  * renders them in a Carousel.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons';
 import { db } from '../../firebase/firebaseIndex';
+import { firebaseAuth } from '../../provider/AuthProvider';
 
 import { useParams } from 'react-router-dom';
 
@@ -19,6 +20,7 @@ const Deck = ({
   shuffledCards,
   onClick,
 }) => {
+  const { user } = useContext(firebaseAuth);
   const [cards, setCards] = useState([]);
   const [hashCards, setHashCards] = useState(null);
   const [isCardFlipped, setIsCardFlipped] = useState(false);
@@ -38,10 +40,17 @@ const Deck = ({
 
     db.collection('decks').doc(hash).get()
     .then(snapshot => {
-      if (snapshot.data().private) {
-        setCanView(false);
-        setIsLoaded(true);
+      const deckData = snapshot.data();
+      if (deckData) {
+        // Allow viewing if deck is public OR if user is the owner
+        const isOwner = user && user.uid === deckData.owner;
+        if (deckData.private && !isOwner) {
+          setCanView(false);
+        } else {
+          setCanView(true);
+        }
       }
+      setIsLoaded(true);
     })
     .catch(error => {
       setIsLoaded(true);
@@ -56,7 +65,7 @@ const Deck = ({
         setHashCards(arr);
       })
       .catch(error => console.log("Error: ", error.message))
-  }, [hash, shuffledCards.length]);
+  }, [hash, shuffledCards.length, user]);
 
   /* Generates an array of FlippableCards for each card in the deck. */
   useEffect(() => {

@@ -21,30 +21,65 @@ export const dbMethods = {
 
     const document = db.collection('decks').doc();
 
-    const newDeck = {
-      id: document.id,
-      numCards: 0,
-      title,
-      owner: user.uid,
-      private: !isPublic,
-      tags: tags || [],
-      purpose: deckConfig.purpose || null, // 'translation' or 'academic'
-      // Translation-specific fields
-      languagePair: deckConfig.languagePair || null, // e.g., 'en-vi', 'vi-zh'
-      translationDescription: deckConfig.translationDescription || null,
-      // Academic-specific fields
-      academicDescription: deckConfig.academicDescription || null,
-    }
+    // Get user's displayName from Firestore
+    return db.collection('users').doc(user.uid).get()
+      .then((userDoc) => {
+        const userData = userDoc.data();
+        const creatorName = userData?.displayName || user.email || "Người dùng";
 
-    return document.set(newDeck)
-    .then(() => {
-      console.log("Created new deck.");
-      return newDeck;
-    })
-    .catch(err => {
-      console.error("Error creating deck: ", err.message);
-      throw err;
-    });
+        const newDeck = {
+          id: document.id,
+          numCards: 0,
+          title,
+          owner: user.uid,
+          creatorName: creatorName,
+          private: !isPublic,
+          tags: tags || [],
+          purpose: deckConfig.purpose || null, // 'translation' or 'academic'
+          // Translation-specific fields
+          languagePair: deckConfig.languagePair || null, // e.g., 'en-vi', 'vi-zh'
+          translationDescription: deckConfig.translationDescription || null,
+          // Academic-specific fields
+          academicDescription: deckConfig.academicDescription || null,
+        }
+
+        return document.set(newDeck)
+          .then(() => {
+            console.log("Created new deck.");
+            return newDeck;
+          })
+          .catch(err => {
+            console.error("Error creating deck: ", err.message);
+            throw err;
+          });
+      })
+      .catch(err => {
+        console.error("Error fetching user data: ", err.message);
+        // Fallback: create deck without creatorName
+        const newDeck = {
+          id: document.id,
+          numCards: 0,
+          title,
+          owner: user.uid,
+          creatorName: user.email || "Người dùng",
+          private: !isPublic,
+          tags: tags || [],
+          purpose: deckConfig.purpose || null,
+          languagePair: deckConfig.languagePair || null,
+          translationDescription: deckConfig.translationDescription || null,
+          academicDescription: deckConfig.academicDescription || null,
+        }
+
+        return document.set(newDeck)
+          .then(() => {
+            console.log("Created new deck.");
+            return newDeck;
+          })
+          .catch(err => {
+            console.error("Error creating deck: ", err.message);
+            throw err;
+          });
+      });
   },
 
   deleteDeck: (user, deckId) => {
@@ -159,5 +194,86 @@ export const dbMethods = {
     .catch(err => {
       console.error("Error deleting card: ", err.message);
     });
+  },
+
+  // Rating methods
+  submitRating: (user, deckId, rating) => {
+    if (!user) {
+      return Promise.reject("User not authenticated");
+    }
+
+    if (rating < 1 || rating > 5) {
+      return Promise.reject("Rating must be between 1 and 5");
+    }
+
+    const ratingRef = db.collection('ratings').doc(`${deckId}_${user.uid}`);
+    
+    return ratingRef.get()
+      .then((doc) => {
+        const isNewRating = !doc.exists;
+        const oldRating = doc.exists ? doc.data().rating : null;
+
+        // Save or update rating
+        return ratingRef.set({
+          deckId,
+          userId: user.uid,
+          rating,
+          createdAt: FieldValue.serverTimestamp(),
+          updatedAt: FieldValue.serverTimestamp()
+        })
+        .then(() => {
+          // Update deck's average rating and total ratings
+          return db.collection('decks').doc(deckId).get()
+            .then((deckDoc) => {
+              if (!deckDoc.exists) {
+                throw new Error("Deck not found");
+              }
+
+              const deckData = deckDoc.data();
+              const currentTotalRatings = deckData.totalRatings || 0;
+              const currentAverageRating = deckData.averageRating || 0;
+              const currentSum = currentAverageRating * currentTotalRatings;
+
+              let newTotalRatings, newAverageRating;
+
+              if (isNewRating) {
+                // New rating
+                newTotalRatings = currentTotalRatings + 1;
+                newAverageRating = (currentSum + rating) / newTotalRatings;
+              } else {
+                // Update existing rating
+                newTotalRatings = currentTotalRatings;
+                newAverageRating = (currentSum - oldRating + rating) / newTotalRatings;
+              }
+
+              return db.collection('decks').doc(deckId).update({
+                averageRating: newAverageRating,
+                totalRatings: newTotalRatings
+              });
+            });
+        });
+      })
+      .catch(err => {
+        console.error("Error submitting rating: ", err.message);
+        throw err;
+      });
+  },
+
+  getUserRating: (user, deckId) => {
+    if (!user) {
+      return Promise.resolve(null);
+    }
+
+    return db.collection('ratings').doc(`${deckId}_${user.uid}`).get()
+      .then((doc) => {
+        if (doc.exists) {
+          return doc.data().rating;
+        }
+        return null;
+      })
+      .catch(err => {
+        console.error("Error getting user rating: ", err.message);
+        return null;
+      });
   },
 }

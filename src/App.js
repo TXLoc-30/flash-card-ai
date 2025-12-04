@@ -16,6 +16,7 @@ import CardMatchingGame from './components/decks-and-cards/CardMatchingGame';
 import Dashboard from './components/Dashboard';
 import Landing from './components/Landing';
 import SearchResults from './components/SearchResults';
+import AllDecksPage from './components/AllDecksPage';
 import Login from './components/account-management/Login';
 import Logout from './components/account-management/Logout';
 import MyAccount from './components/account-management/MyAccount';
@@ -44,6 +45,7 @@ const App = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [shuffledCards, setShuffledCards] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [pendingAction, setPendingAction] = useState(null); // { type: 'shuffle' | 'match', deckId: string }
 
   const history = useHistory();
   const { user } = useContext(firebaseAuth);
@@ -86,6 +88,37 @@ const App = () => {
     }
   }, [searchQuery, history]);
 
+  // Handle pending actions when cards are loaded
+  useEffect(() => {
+    if (!pendingAction) return;
+
+    if (cards.length > 0 && selectedDecks.length > 0 && selectedDecks.includes(pendingAction.deckId)) {
+      if (pendingAction.type === 'shuffle') {
+        const randomized_cards = fisherYatesShuffle(cards);
+        setShuffledCards(randomized_cards);
+        history.push("/app/shuffle");
+      } else if (pendingAction.type === 'match') {
+        history.push("/app/match-game");
+      }
+      setPendingAction(null);
+    }
+  }, [cards, selectedDecks, pendingAction, history]);
+
+  // Check for empty deck after a delay
+  useEffect(() => {
+    if (!pendingAction || cards.length > 0) return;
+    
+    const timeoutId = setTimeout(() => {
+      if (pendingAction && selectedDecks.length > 0 && cards.length === 0) {
+        alert("Bộ thẻ này không có thẻ nào.");
+        setPendingAction(null);
+        setSelectedDecks([]);
+      }
+    }, 2000);
+
+    return () => clearTimeout(timeoutId);
+  }, [pendingAction, cards, selectedDecks]);
+
   const handleButtons = (event) => {
     // Prevent default behavior (if event is a real event object)
     if (event && typeof event.preventDefault === 'function') {
@@ -112,6 +145,7 @@ const App = () => {
         return;
 
       case "shuffle":
+      case "shuffle-deck":
         console.log("Shuffle button clicked", { selectedDecks, cardsLength: cards.length });
         if (selectedDecks.length === 0) {
           console.warn("No decks selected");
@@ -131,6 +165,7 @@ const App = () => {
         return;
 
       case "match-game":
+      case "match-game-deck":
         console.log("Match game button clicked", { selectedDecks, cardsLength: cards.length });
         if (selectedDecks.length === 0) {
           console.warn("No decks selected");
@@ -231,13 +266,83 @@ const App = () => {
         </Route>
         <Route path="/search">
           <main>
-            <SearchResults searchQuery={searchQuery} publicDecks={publicDecks} />
+            <SearchResults 
+              searchQuery={searchQuery} 
+              publicDecks={publicDecks}
+              onDeckStart={(deckId) => {
+                history.push(`/app/d/${deckId}`);
+              }}
+              onDeckShuffle={(deckId) => {
+                if (!user) {
+                  alert("Vui lòng đăng nhập để sử dụng tính năng này.");
+                  return;
+                }
+                setSelectedDecks([deckId]);
+                setPendingAction({ type: 'shuffle', deckId });
+              }}
+              onDeckMatchGame={(deckId) => {
+                if (!user) {
+                  alert("Vui lòng đăng nhập để sử dụng tính năng này.");
+                  return;
+                }
+                setSelectedDecks([deckId]);
+                setPendingAction({ type: 'match', deckId });
+              }}
+            />
+            <Footer />
+          </main>
+        </Route>
+        <Route path="/all-decks">
+          <main>
+            <AllDecksPage
+              publicDecks={publicDecks}
+              onDeckStart={(deckId) => {
+                history.push(`/app/d/${deckId}`);
+              }}
+              onDeckShuffle={(deckId) => {
+                if (!user) {
+                  alert("Vui lòng đăng nhập để sử dụng tính năng này.");
+                  return;
+                }
+                setSelectedDecks([deckId]);
+                setPendingAction({ type: 'shuffle', deckId });
+              }}
+              onDeckMatchGame={(deckId) => {
+                if (!user) {
+                  alert("Vui lòng đăng nhập để sử dụng tính năng này.");
+                  return;
+                }
+                setSelectedDecks([deckId]);
+                setPendingAction({ type: 'match', deckId });
+              }}
+            />
             <Footer />
           </main>
         </Route>
         <Route exact path="/">
           <main>
-            <Landing publicDecks={publicDecks} />
+            <Landing 
+              publicDecks={publicDecks}
+              onDeckStart={(deckId) => {
+                history.push(`/app/d/${deckId}`);
+              }}
+              onDeckShuffle={(deckId) => {
+                if (!user) {
+                  alert("Vui lòng đăng nhập để sử dụng tính năng này.");
+                  return;
+                }
+                setSelectedDecks([deckId]);
+                setPendingAction({ type: 'shuffle', deckId });
+              }}
+              onDeckMatchGame={(deckId) => {
+                if (!user) {
+                  alert("Vui lòng đăng nhập để sử dụng tính năng này.");
+                  return;
+                }
+                setSelectedDecks([deckId]);
+                setPendingAction({ type: 'match', deckId });
+              }}
+            />
             <Footer />
           </main>
         </Route>

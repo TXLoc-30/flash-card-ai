@@ -4,22 +4,25 @@
  * DeleteAccount components.
  */
 
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { firebaseAuth } from '../../provider/AuthProvider';
 import { Link, Switch, Route } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faAngleRight, faLock, faEnvelope, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faAngleRight, faLock, faEnvelope, faTrash, faUser } from '@fortawesome/free-solid-svg-icons';
+import { db } from '../../firebase/firebaseIndex';
 
 import Breadcrumb from '../Breadcrumb';
 import ChangePassword from './ChangePassword';
 import DeleteAccount from './DeleteAccount';
 import PageHeading from '../PageHeading';
 import UpdateEmail from './UpdateEmail';
+import UpdateDisplayName from './UpdateDisplayName';
 
 const MyAccount = () => {
   const [inputs, setInputs] = useState({ email: "", password: "", newPassword: "" });
+  const [displayName, setDisplayName] = useState("");
 
   const { 
     loading, 
@@ -31,6 +34,22 @@ const MyAccount = () => {
   } = useAuth(inputs.email, inputs.password, inputs.newPassword);
 
   const { user } = useContext(firebaseAuth);
+
+  // Load displayName
+  useEffect(() => {
+    if (!user) return;
+    
+    db.collection('users').doc(user.uid).get()
+      .then((doc) => {
+        if (doc.exists) {
+          const userData = doc.data();
+          setDisplayName(userData.displayName || "");
+        }
+      })
+      .catch((err) => {
+        console.error("Error loading user data: ", err);
+      });
+  }, [user]);
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -60,8 +79,14 @@ const MyAccount = () => {
             />
             <PageHeading
               title="Your account."
-              subtitle="Update your email and password or delete your account."
+              subtitle="Update your name, email and password or delete your account."
             />
+            <div className="account-data">
+              <p><FontAwesomeIcon icon={faUser} />&nbsp;&nbsp;&nbsp;{displayName || "Chưa có tên"} </p>
+                <Link to="/my-account/change-display-name" className="btn btn-tertiary">
+                  <span>{displayName ? "Cập nhật tên" : "Thêm tên"}</span><FontAwesomeIcon icon={faAngleRight} className="icon" />
+                </Link>
+            </div>
             <div className="account-data">
               <p><FontAwesomeIcon icon={faEnvelope} />&nbsp;&nbsp;&nbsp;{user.email} </p>
                 <Link to="/my-account/change-email" className="btn btn-tertiary">
@@ -85,6 +110,10 @@ const MyAccount = () => {
                 <FontAwesomeIcon icon={faTrash} />&nbsp;&nbsp;&nbsp;Delete Account
               </Link>
             </div>
+          </Route>
+
+          <Route exact path="/my-account/change-display-name">
+            <UpdateDisplayName />
           </Route>
 
           <Route exact path="/my-account/change-email">

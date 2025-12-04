@@ -432,8 +432,7 @@ textarea {
 
 input:focus,
 textarea:focus {
-  outline-offset: 1.2rem;
-  outline-color: $color-focus;
+  outline: none;
 }
 
 .navbar {
@@ -619,6 +618,10 @@ form {
       display: flex;
       gap: 1rem;
       align-items: center;
+    }
+
+    input:focus {
+      outline: none;
     }
   }
 
@@ -1319,55 +1322,678 @@ footer {
     .deck-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 1rem;
+      gap: 1.5rem;
       margin-bottom: 1rem;
-      
-      .deck-card {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        text-align: left;
-        padding: 1.5rem;
-        position: relative;
-        
-        span:first-child {
-          font-weight: 600;
-          margin-bottom: 0.5rem;
+    }
+  }
+
+  .deck-card-new {
+    background-color: white;
+    border: 2px solid $color-dark;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    min-height: 200px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    // Small variant for slider and 5x5 grid
+    &.deck-card-small {
+      padding: 1rem;
+      min-height: 160px;
+      border-radius: 0.75rem;
+
+      .deck-card-header {
+        margin-bottom: 0.75rem;
+
+        .deck-card-title {
+          font-size: 1rem;
         }
-        
-        .deck-meta {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          font-size: 0.9rem;
-          color: rgba(0, 0, 0, 0.6);
-          margin-top: auto;
-          
-          .private-badge {
-            background: rgba(255, 193, 7, 0.2);
-            color: #856404;
-            padding: 0.2rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            font-weight: 500;
+
+        .private-badge,
+        .public-badge {
+          padding: 0.2rem 0.5rem;
+          font-size: 0.7rem;
+        }
+      }
+
+      .deck-card-info {
+        margin-bottom: 1rem;
+
+        .deck-card-count {
+          font-size: 0.85rem;
+        }
+
+        .deck-card-creator {
+          font-size: 0.75rem;
+          margin: 0.4rem 0 0 0;
+        }
+
+        .deck-card-rating {
+          margin-top: 0.5rem;
+        }
+      }
+
+      .deck-card-actions {
+        gap: 0.4rem;
+
+        .btn-card-action {
+          padding: 0.5rem 0.4rem;
+          font-size: 0.75rem;
+
+          svg {
+            font-size: 0.95rem;
           }
         }
-        
-        .icon {
-          position: absolute;
-          right: 1.5rem;
-          top: 50%;
-          transform: translateY(-50%);
+      }
+    }
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .deck-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+
+      .deck-card-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: $color-dark;
+        margin: 0;
+        flex: 1;
+        text-align: left;
+        line-height: 1.4;
+      }
+
+      .private-badge,
+      .public-badge {
+        padding: 0.25rem 0.6rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        white-space: nowrap;
+        margin-left: 0.5rem;
+      }
+
+      .private-badge {
+        background: rgba(255, 193, 7, 0.2);
+        color: #856404;
+      }
+
+      .public-badge {
+        background: rgba(57, 169, 93, 0.2);
+        color: #005611;
+      }
+    }
+
+    .deck-card-info {
+      margin-bottom: 1.5rem;
+      text-align: left;
+
+      .deck-card-count {
+        color: rgba(0, 0, 0, 0.6);
+        font-size: 0.95rem;
+        margin: 0;
+      }
+
+      .deck-card-creator {
+        color: rgba(0, 0, 0, 0.5);
+        font-size: 0.85rem;
+        margin: 0.5rem 0 0 0;
+        font-style: italic;
+      }
+
+      .deck-card-rating {
+        margin-top: 0.75rem;
+      }
+    }
+
+    .deck-card-actions {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: auto;
+
+      .btn-card-action {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.25rem;
+        padding: 0.75rem 0.5rem;
+        font-size: 0.85rem;
+        border-radius: 0.5rem;
+        border: 2px solid $color-dark;
+        background-color: white;
+        color: $color-dark;
+        transition: all 0.2s;
+        cursor: pointer;
+
+        svg {
+          font-size: 1.1rem;
+        }
+
+        span {
+          font-weight: 500;
+        }
+
+        &:hover {
+          background-color: $color-primary;
+          border-color: $color-primary;
+          color: white;
+          transform: translateY(-2px);
+        }
+
+        &.btn-start:hover {
+          background-color: $color-primary;
+          border-color: $color-primary;
+        }
+
+        &.btn-shuffle:hover {
+          background-color: #ff6b6b;
+          border-color: #ff6b6b;
+        }
+
+        &.btn-match:hover {
+          background-color: #4ecdc4;
+          border-color: #4ecdc4;
         }
       }
     }
   }
 
+  // User Decks Container Styles
+  .user-decks-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+
+    .user-decks-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      position: relative;
+
+      h2 {
+        font-size: 2rem;
+        color: $color-dark;
+        margin: 0;
+      }
+
+      .see-more-link {
+        color: $color-primary;
+        text-decoration: none;
+        font-size: 1rem;
+        font-weight: 500;
+        transition: color 0.2s;
+
+        &:hover {
+          color: darken($color-primary, 10%);
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+
+  // Small deck grid for slider
+  .deck-grid-small {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+
+    .deck-card-new {
+      padding: 1rem;
+      min-height: 160px;
+      border-radius: 0.75rem;
+
+      .deck-card-header {
+        margin-bottom: 0.75rem;
+
+        .deck-card-title {
+          font-size: 1rem;
+        }
+
+        .private-badge,
+        .public-badge {
+          padding: 0.2rem 0.5rem;
+          font-size: 0.7rem;
+        }
+      }
+
+      .deck-card-info {
+        margin-bottom: 1rem;
+
+        .deck-card-count {
+          font-size: 0.85rem;
+        }
+
+        .deck-card-creator {
+          font-size: 0.75rem;
+          margin: 0.4rem 0 0 0;
+        }
+
+        .deck-card-rating {
+          margin-top: 0.5rem;
+        }
+      }
+
+      .deck-card-actions {
+        gap: 0.4rem;
+
+        .btn-card-action {
+          padding: 0.5rem 0.4rem;
+          font-size: 0.75rem;
+
+          svg {
+            font-size: 0.95rem;
+          }
+        }
+      }
+    }
+  }
+
+  // Top Rated Decks Styles
+  .top-rated-decks-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+
+    .top-rated-decks-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      position: relative;
+
+      h2 {
+        font-size: 2rem;
+        color: $color-dark;
+        margin: 0;
+      }
+
+      .see-more-link {
+        color: $color-primary;
+        text-decoration: none;
+        font-size: 1rem;
+        font-weight: 500;
+        transition: color 0.2s;
+
+        &:hover {
+          color: darken($color-primary, 10%);
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+
+  // Grid for 4 cards per row (always 4 columns, no responsive)
+  .deck-grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+
+    .deck-card-new {
+      padding: 1rem;
+      min-height: 150px;
+      border-radius: 0.75rem;
+
+      .deck-card-header {
+        margin-bottom: 0.75rem;
+
+        .deck-card-title {
+          font-size: 0.95rem;
+          line-height: 1.3;
+        }
+
+        .private-badge,
+        .public-badge {
+          padding: 0.15rem 0.4rem;
+          font-size: 0.65rem;
+          margin-left: 0.4rem;
+        }
+      }
+
+      .deck-card-info {
+        margin-bottom: 0.75rem;
+
+        .deck-card-count {
+          font-size: 0.8rem;
+        }
+
+        .deck-card-creator {
+          font-size: 0.7rem;
+          margin: 0.3rem 0 0 0;
+        }
+
+        .deck-card-rating {
+          margin-top: 0.4rem;
+        }
+      }
+
+      .deck-card-actions {
+        gap: 0.3rem;
+
+        .btn-card-action {
+          padding: 0.4rem 0.3rem;
+          font-size: 0.7rem;
+
+          svg {
+            font-size: 0.85rem;
+          }
+
+          span {
+            font-size: 0.7rem;
+          }
+        }
+      }
+    }
+  }
+
+  // All Decks Page Styles
+  .all-decks-page {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+
+    .all-decks-header {
+      text-align: center;
+      margin-bottom: 3rem;
+
+      h1 {
+        font-size: 2.5rem;
+        color: $color-dark;
+        margin-bottom: 0.5rem;
+      }
+
+      p {
+        font-size: 1.1rem;
+        color: rgba(0, 0, 0, 0.6);
+      }
+    }
+
+    .no-decks-message {
+      text-align: center;
+      padding: 4rem 2rem;
+
+      p {
+        font-size: 1.2rem;
+        color: rgba(0, 0, 0, 0.5);
+      }
+    }
+
+    // Pagination Styles
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 3rem;
+
+      .pagination-btn {
+        padding: 0.5rem 1rem;
+        background: white;
+        border: 2px solid $color-dark;
+        border-radius: 0.5rem;
+        color: $color-dark;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.2s;
+
+        &:hover:not(:disabled) {
+          background: $color-dark;
+          color: white;
+        }
+
+        &:disabled {
+          opacity: 0.4;
+          cursor: not-allowed;
+        }
+      }
+
+      .pagination-numbers {
+        display: flex;
+        gap: 0.25rem;
+        align-items: center;
+
+        .pagination-number {
+          min-width: 40px;
+          height: 40px;
+          padding: 0.5rem;
+          background: white;
+          border: 2px solid $color-dark;
+          border-radius: 0.5rem;
+          color: $color-dark;
+          font-size: 0.9rem;
+          cursor: pointer;
+          transition: all 0.2s;
+
+          &:hover {
+            background: rgba(80, 79, 91, 0.1);
+          }
+
+          &.active {
+            background: $color-dark;
+            color: white;
+          }
+        }
+
+        .pagination-ellipsis {
+          padding: 0 0.5rem;
+          color: rgba(0, 0, 0, 0.5);
+        }
+      }
+    }
+  }
+
+  // 5x5 Grid Layout (5 hàng x 5 cột) - High specificity để override các rules khác
+  .all-decks-page .deck-grid.deck-grid-5x5,
+  .all-decks-page .deck-grid-5x5 {
+    display: grid !important;
+    grid-template-columns: repeat(5, 1fr) !important;
+    grid-auto-rows: minmax(180px, auto);
+    gap: 1.25rem !important;
+    margin-bottom: 3rem !important;
+    width: 100% !important;
+    max-width: 100% !important;
+
+    // Responsive: Giảm số cột trên màn hình nhỏ hơn
+    @media (max-width: 1600px) {
+      grid-template-columns: repeat(4, 1fr) !important;
+      gap: 1rem !important;
+    }
+
+    @media (max-width: 1200px) {
+      grid-template-columns: repeat(3, 1fr) !important;
+    }
+
+    @media (max-width: 768px) {
+      grid-template-columns: repeat(2, 1fr) !important;
+      gap: 0.75rem !important;
+    }
+
+    @media (max-width: 480px) {
+      grid-template-columns: 1fr !important;
+    }
+  }
+
+  // Style cho deck-card-new trong grid 5x5 - High specificity
+  .all-decks-page .deck-grid.deck-grid-5x5 .deck-card-new,
+  .all-decks-page .deck-grid-5x5 .deck-card-new {
+    padding: 1rem;
+    min-height: 180px;
+    max-height: 220px;
+    border-radius: 0.75rem;
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    border: 2px solid $color-dark;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .deck-card-header {
+      margin-bottom: 0.75rem;
+      flex-shrink: 0;
+
+      .deck-card-title {
+        font-size: 0.95rem;
+        line-height: 1.3;
+        margin: 0;
+        word-wrap: break-word;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+      }
+
+      .private-badge,
+      .public-badge {
+        padding: 0.2rem 0.5rem;
+        font-size: 0.65rem;
+        margin-left: 0.4rem;
+      }
+    }
+
+    .deck-card-info {
+      margin-bottom: 0.75rem;
+      flex: 1;
+      overflow: hidden;
+
+      .deck-card-count {
+        font-size: 0.8rem;
+        margin: 0;
+      }
+
+      .deck-card-creator {
+        font-size: 0.7rem;
+        margin: 0.3rem 0 0 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .deck-card-rating {
+        margin-top: 0.4rem;
+        flex-shrink: 0;
+      }
+    }
+
+    .deck-card-actions {
+      gap: 0.3rem;
+      flex-shrink: 0;
+      margin-top: auto;
+
+      .btn-card-action {
+        padding: 0.4rem 0.3rem;
+        font-size: 0.7rem;
+        min-height: auto;
+
+        svg {
+          font-size: 0.85rem;
+        }
+
+        span {
+          font-size: 0.65rem;
+        }
+      }
+    }
+  }
+
+  // Pagination Styles (standalone)
+  .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 3rem;
+
+      .pagination-btn {
+        padding: 0.5rem 1rem;
+        background: white;
+        border: 2px solid $color-dark;
+        border-radius: 0.5rem;
+        color: $color-dark;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.2s;
+
+        &:hover:not(:disabled) {
+          background: $color-dark;
+          color: white;
+        }
+
+        &:disabled {
+          opacity: 0.4;
+          cursor: not-allowed;
+        }
+      }
+
+      .pagination-numbers {
+        display: flex;
+        gap: 0.25rem;
+        align-items: center;
+
+        .pagination-number {
+          min-width: 40px;
+          height: 40px;
+          padding: 0.5rem;
+          background: white;
+          border: 2px solid $color-dark;
+          border-radius: 0.5rem;
+          color: $color-dark;
+          font-size: 0.9rem;
+          cursor: pointer;
+          transition: all 0.2s;
+
+          &:hover {
+            background: rgba(80, 79, 91, 0.1);
+          }
+
+          &.active {
+            background: $color-dark;
+            color: white;
+          }
+        }
+
+        .pagination-ellipsis {
+          padding: 0 0.5rem;
+          color: rgba(0, 0, 0, 0.5);
+        }
+      }
+    }
+
   .public-decks {
     text-align: center;
-    max-width: 512px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+    
+    h2 {
+      margin-bottom: 1rem;
+    }
+    
     p {
       font-size: 1.0rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .deck-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
     }
 
     &.search-results {
@@ -1476,7 +2102,8 @@ footer {
 
         .deck-meta {
           display: flex;
-          align-items: center;
+          flex-direction: column;
+          align-items: flex-start;
           gap: 0.5rem;
           font-size: 0.9rem;
           color: rgba(0, 0, 0, 0.6);
@@ -1499,6 +2126,13 @@ footer {
             font-size: 0.8rem;
             font-weight: 500;
           }
+
+          .deck-creator {
+            color: rgba(0, 0, 0, 0.5);
+            font-size: 0.85rem;
+            font-style: italic;
+            width: 100%;
+          }
         }
 
         .icon {
@@ -1516,6 +2150,50 @@ footer {
     gap: 1rem;
     > * {
       flex: 1;
+    }
+  }
+
+  // Star Rating Styles
+  .star-rating {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    .star-rating-stars {
+      display: flex;
+      gap: 0.25rem;
+      align-items: center;
+
+      .star {
+        display: inline-block;
+        transition: transform 0.2s;
+
+        &.star-interactive:hover {
+          transform: scale(1.2);
+        }
+      }
+    }
+
+    .star-rating-info {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      color: rgba(0, 0, 0, 0.6);
+
+      .star-rating-average {
+        font-weight: 600;
+        color: rgba(0, 0, 0, 0.8);
+      }
+
+      .star-rating-count {
+        color: rgba(0, 0, 0, 0.5);
+      }
+
+      .star-rating-no-rating {
+        color: rgba(0, 0, 0, 0.4);
+        font-style: italic;
+      }
     }
   }
 
@@ -1737,11 +2415,35 @@ footer {
 
   .dashboard-inner,
   .my-account-inner {
-    max-width: 65ch;
+    max-width: 900px;
     background-color: $color-light;
     border-radius: 1.5rem;
     padding: 2.5rem;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  }
+
+  .dashboard {
+    max-width: 1200px;
+    padding: 2rem;
+    
+    .dashboard-inner {
+      > div:first-of-type {
+        margin-bottom: 2rem;
+      }
+      
+      > div:last-child {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-top: 2rem;
+        justify-content: flex-start;
+
+        .btn {
+          flex: 0 1 auto;
+          min-width: 200px;
+        }
+      }
+    }
   }
 
   form {
@@ -1755,15 +2457,29 @@ footer {
   }
 
   .deck-list {
+    margin-top: 2rem;
+    
+    > p {
+      font-size: 1.1rem;
+      margin-bottom: 1.5rem;
+    }
+    
     ul {
       li {
         padding: 2.5rem 1.5rem;
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
+        gap: 1.5rem;
+
+        > div:first-child {
+          flex: 1;
+          min-width: 0;
+        }
 
         .button-row {
           margin-top: 0;
+          flex-shrink: 0;
         }
       }
     }
@@ -1851,7 +2567,12 @@ footer {
 
   .dashboard-inner,
   .my-account-inner {
-    max-width: 75ch;
+    max-width: 1000px;
+  }
+
+  .dashboard {
+    max-width: 1400px;
+    padding: 2.5rem;
   }
 
   form {
@@ -2945,6 +3666,50 @@ footer {
     .cards-grid-quizlet {
       grid-template-columns: repeat(6, minmax(0, 1fr));
       gap: 1.5rem;
+    }
+  }
+
+  // Deck Form Wrapper
+  .deck-form-wrapper {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    
+    @media only screen and (min-width: 1024px) {
+      max-width: 900px;
+      padding: 0 2rem;
+    }
+  }
+
+  form.deck-form {
+    max-width: 100%;
+    margin: 0 auto 3rem;
+    width: 100%;
+  }
+
+  // Language Pairs Grid
+  .language-pairs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+
+    @media only screen and (min-width: 768px) {
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 1rem;
+    }
+
+    .language-pair-btn {
+      &:hover {
+        border-color: #39a95d !important;
+        background-color: #f0f9f4 !important;
+        transform: translateY(-2px);
+        box-shadow: 0 2px 8px rgba(57, 169, 93, 0.15);
+      }
+
+      &.active {
+        box-shadow: 0 2px 8px rgba(57, 169, 93, 0.2);
+      }
     }
   }
   

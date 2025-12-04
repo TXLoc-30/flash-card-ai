@@ -6,11 +6,18 @@ import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { firebaseAuth } from '../provider/AuthProvider';
 import useOnDecksSnapshot from '../hooks/useOnDecksSnapshot';
+import DeckSlider from './DeckSlider';
+import TopRatedDecks from './TopRatedDecks';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faAngleRight, faReply } from '@fortawesome/free-solid-svg-icons';
+import { faReply } from '@fortawesome/free-solid-svg-icons';
 
-const Landing = ({ publicDecks = [] }) => {
+const Landing = ({ 
+  publicDecks = [],
+  onDeckStart,
+  onDeckShuffle,
+  onDeckMatchGame
+}) => {
   const { user } = useContext(firebaseAuth);
   const { decks } = useOnDecksSnapshot(user);
   return (
@@ -83,43 +90,25 @@ const Landing = ({ publicDecks = [] }) => {
       
       {user && decks && decks.length > 0 && (
         <section className="user-decks">
-          <h2>Các bộ thẻ của bạn</h2>
-          <p>Bạn có {decks.length} {decks.length === 1 ? 'bộ thẻ' : 'bộ thẻ'}. Nhấp vào để xem chi tiết hoặc vào Dashboard để quản lý.</p>
-          <div className="deck-grid">
-            {decks.slice(0, 6).map((deck) => (
-              <Link 
-                key={deck.id} 
-                to={`/app/d/${deck.id}`} 
-                className="btn btn-tertiary deck-card"
-              >
-                <span>{deck.title}</span>
-                <span className="deck-meta">
-                  {deck.numCards || 0} {deck.numCards === 1 ? 'thẻ' : 'thẻ'}
-                  {deck.private && <span className="private-badge">Riêng tư</span>}
-                </span>
-                <FontAwesomeIcon icon={faAngleRight} className="icon"/>
-              </Link>
-            ))}
-          </div>
-          {decks.length > 6 && (
-            <Link to="/app" className="btn btn-secondary" style={{ marginTop: '1rem' }}>
-              Xem tất cả {decks.length} bộ thẻ
-            </Link>
-          )}
+          <DeckSlider
+            decks={decks}
+            onDeckStart={onDeckStart}
+            onDeckShuffle={onDeckShuffle}
+            onDeckMatchGame={onDeckMatchGame}
+            seeMoreLink="/all-decks?type=user"
+          />
         </section>
       )}
       
       <section className="public-decks">
-        <h2>Public Flash Cards</h2><p>No account? No problem. Public flash cards are free for everyone to use!</p>
-        <Link to="/app/d/qjZxBPvrS6WLJxd30m3K" className="btn btn-tertiary">
-          <span>Classical Music Composers</span> <FontAwesomeIcon icon={faAngleRight} className="icon"/>
-        </Link>
-        <Link to="/app/d/d7tyhjblFiem7cWCA8Wa7rawBpu1" className="btn btn-tertiary">
-          <span>Star Trek Facts & Trivia</span> <FontAwesomeIcon icon={faAngleRight} className="icon"/>
-        </Link>
-        <Link to="/app/d/Fd73VQwvnOoNHFrqQHW2" className="btn btn-tertiary">
-          <span>Miscellaneous Trivia</span> <FontAwesomeIcon icon={faAngleRight} className="icon"/>
-        </Link>
+        <TopRatedDecks
+          publicDecks={publicDecks}
+          onDeckStart={onDeckStart}
+          onDeckShuffle={onDeckShuffle}
+          onDeckMatchGame={onDeckMatchGame}
+          seeMoreLink="/all-decks?type=public"
+          limit={4}
+        />
       </section>
     </>
   );

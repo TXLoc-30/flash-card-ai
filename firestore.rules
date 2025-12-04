@@ -25,11 +25,11 @@ service cloud.firestore {
     
     // Rules cho collection 'decks'
     match /decks/{deckId} {
+      // Ai cũng có thể đọc deck công khai (không cần authentication)
+      allow read: if resource == null || resource.data.private == false;
+      
       // Chỉ owner mới có thể đọc/ghi deck riêng tư
       allow read, write: if isAuthenticated() && request.auth.uid == resource.data.owner;
-      
-      // Ai cũng có thể đọc deck công khai
-      allow read: if resource.data.private == false;
       
       // Chỉ user đã đăng nhập mới có thể tạo deck mới
       allow create: if isAuthenticated() && request.auth.uid == request.resource.data.owner;
@@ -50,6 +50,18 @@ service cloud.firestore {
       
       // Chỉ user đã đăng nhập mới có thể tạo card mới và phải là owner
       allow create: if isAuthenticated() && request.auth.uid == request.resource.data.owner;
+    }
+
+    // Rules cho collection 'ratings'
+    match /ratings/{ratingId} {
+      // Ai cũng có thể đọc ratings (để hiển thị đánh giá)
+      allow read: if isAuthenticated();
+      
+      // Chỉ user đã đăng nhập mới có thể tạo/cập nhật rating của chính họ
+      allow create, update: if isAuthenticated() && request.auth.uid == request.resource.data.userId;
+      
+      // Không cho phép xóa rating (hoặc chỉ owner mới có thể xóa)
+      allow delete: if isAuthenticated() && request.auth.uid == resource.data.userId;
     }
   }
 }

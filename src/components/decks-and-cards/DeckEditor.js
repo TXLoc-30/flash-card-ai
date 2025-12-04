@@ -9,7 +9,7 @@ import { dbMethods } from '../../firebase/dbMethods';
 import { useHistory } from 'react-router-dom';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHeading, faLanguage, faGraduationCap } from '@fortawesome/free-solid-svg-icons';
+import { faHeading, faLanguage, faGraduationCap, faGlobe, faLock } from '@fortawesome/free-solid-svg-icons';
 
 import Accordion from '../Accordion';
 import Breadcrumb from '../Breadcrumb';
@@ -133,7 +133,8 @@ const DeckEditor = ({
         subtitle="Cập nhật thông tin và cấu hình của bộ thẻ"
       />
       
-      <form onSubmit={updateDeck} className="deck-form">
+      <div className="deck-form-wrapper">
+        <form onSubmit={updateDeck} className="deck-form">
         {/* Basic Information */}
         <div style={{ marginBottom: '2rem' }}>
           <h3 style={{ marginBottom: '1rem', fontSize: '1.2rem', fontWeight: 'bold', color: '#504f5b' }}>
@@ -218,22 +219,41 @@ const DeckEditor = ({
             </h3>
             
             <div className="input-block" style={{ marginBottom: '1.5rem' }}>
-              <label htmlFor="languagePair" style={{ fontWeight: 'bold' }}>
+              <label htmlFor="languagePair" style={{ fontWeight: 'bold', marginBottom: '1rem', display: 'block' }}>
                 Cặp ngôn ngữ <span style={{ color: 'red' }}>*</span>
               </label>
-              <select
-                id="languagePair"
-                name="languagePair"
-                value={languagePair}
-                onChange={(e) => setLanguagePair(e.target.value)}
-                required
-                className="select-input"
-              >
-                <option value="">-- Chọn cặp ngôn ngữ --</option>
+              <div className="language-pairs-grid">
                 {languagePairs.map(pair => (
-                  <option key={pair.value} value={pair.value}>{pair.label}</option>
+                  <button
+                    key={pair.value}
+                    type="button"
+                    className={`language-pair-btn ${languagePair === pair.value ? 'active' : ''}`}
+                    onClick={() => setLanguagePair(pair.value)}
+                    style={{
+                      padding: '0.75rem 1rem',
+                      border: `2px solid ${languagePair === pair.value ? '#39a95d' : '#ddd'}`,
+                      borderRadius: '0.5rem',
+                      backgroundColor: languagePair === pair.value ? '#f0f9f4' : 'white',
+                      color: languagePair === pair.value ? '#005611' : '#504f5b',
+                      fontWeight: languagePair === pair.value ? '600' : '500',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                      fontSize: '0.95rem',
+                      textAlign: 'center'
+                    }}
+                  >
+                    {pair.label}
+                  </button>
                 ))}
-              </select>
+              </div>
+              {languagePair && (
+                <input
+                  type="hidden"
+                  name="languagePair"
+                  value={languagePair}
+                  required
+                />
+              )}
             </div>
 
             <div className="input-block">
@@ -286,30 +306,80 @@ const DeckEditor = ({
 
 
         {/* Public checkbox */}
-        <div style={{ marginBottom: '2rem' }}>
+        <div style={{ marginBottom: '3rem' }}>
           <label 
             htmlFor="public" 
             style={{ 
               display: 'flex', 
               alignItems: 'center', 
               cursor: 'pointer',
-              padding: '1rem',
-              border: '1px solid #ddd',
-              borderRadius: '0.5rem',
-              backgroundColor: isPublic ? '#f0f9f4' : 'white',
-              transition: 'all 0.3s'
+              padding: '1.25rem',
+              border: `2px solid ${isPublic ? '#39a95d' : '#ddd'}`,
+              borderRadius: '0.75rem',
+              backgroundColor: isPublic ? '#f0f9f4' : '#fafafa',
+              transition: 'all 0.3s ease',
+              boxShadow: isPublic ? '0 2px 8px rgba(57, 169, 93, 0.15)' : 'none',
+              position: 'relative'
             }}
           >
-        <input
-          id="public"
-          name="public"
-          type="checkbox"
-          checked={isPublic ? true : false}
-          onChange={() => setIsPublic(!isPublic)}
-              style={{ marginRight: '10px', cursor: 'pointer' }}
-        />
-            <span>Bộ thẻ này có công khai và có thể chia sẻ?</span>
-        </label>
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center',
+              width: '24px',
+              height: '24px',
+              marginRight: '12px',
+              borderRadius: '4px',
+              backgroundColor: isPublic ? '#39a95d' : 'white',
+              border: `2px solid ${isPublic ? '#39a95d' : '#ccc'}`,
+              transition: 'all 0.3s ease'
+            }}>
+              {isPublic && (
+                <FontAwesomeIcon 
+                  icon={faGlobe} 
+                  style={{ color: 'white', fontSize: '12px' }} 
+                />
+              )}
+              {!isPublic && (
+                <FontAwesomeIcon 
+                  icon={faLock} 
+                  style={{ color: '#999', fontSize: '12px' }} 
+                />
+              )}
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ 
+                fontWeight: '600', 
+                color: isPublic ? '#005611' : '#504f5b',
+                marginBottom: '4px',
+                fontSize: '1rem'
+              }}>
+                {isPublic ? 'Bộ thẻ công khai' : 'Bộ thẻ riêng tư'}
+              </div>
+              <div style={{ 
+                fontSize: '0.9rem', 
+                color: isPublic ? '#39a95d' : '#666',
+                lineHeight: '1.4'
+              }}>
+                {isPublic 
+                  ? 'Bộ thẻ này có thể được chia sẻ và mọi người đều có thể xem' 
+                  : 'Chỉ bạn mới có thể xem bộ thẻ này'}
+              </div>
+            </div>
+            <input
+              id="public"
+              name="public"
+              type="checkbox"
+              checked={isPublic ? true : false}
+              onChange={() => setIsPublic(!isPublic)}
+              style={{ 
+                position: 'absolute',
+                opacity: 0,
+                width: 0,
+                height: 0
+              }}
+            />
+          </label>
         </div>
 
         <button
@@ -326,6 +396,7 @@ const DeckEditor = ({
           {updateSuccess ? "✓ Đã cập nhật!" : "Cập nhật" }
         </button>
       </form>
+      </div>
 
       {/* Cards Section */}
       <div style={{ marginTop: '3rem' }}>
